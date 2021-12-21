@@ -51,9 +51,10 @@ const UsuarioSchema = Schema({
 UsuarioSchema.methods.toJSON = function() {
     //Sacando la version y el password del usuario. Para que no se le regrese en la peticion.
     //Esta sobreescribiendo el metodo toJSON de mongoose
-    const {__v, password, ...usuario} = this.toObject()
+    const {__v, password, _id, ...usuario} = this.toObject()
 
-    return usuario
+    //Esto para que se muestre uid en lugar de _id
+    return {...usuario, uid: _id}
 }
 
 module.exports = model('Usuario', UsuarioSchema)

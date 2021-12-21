@@ -2,7 +2,16 @@ const { Router } = require('express')
 const { check } = require('express-validator')
 const { usuariosGet, usuariosPost, usuariosDelete, usuariosPut } = require('../controllers/usuarios')
 const { esRolValido, correoExiste, existeUsuarioPorId } = require('../helpers/db-validators')
-const { validarCampos } = require('../middlewares/validar-campos')
+
+// const { validarCampos } = require('../middlewares/validar-campos')
+// const { validarJWT } = require('../middlewares/validar-jwt')
+// const { esAdminRol, tieneRol } = require('../middlewares/validar-roles')
+
+//Asi se pueden optimizar las importaciones, ya que todo esto viene de la carpeta middlewares
+//Se crea un archivo index.js, por eso solo se require middlewares, sin el archivo en si
+const {
+    validarCampos, validarJWT, esAdminRol, tieneRol
+} = require('../middlewares')
 
 const router = Router()
 
@@ -12,6 +21,7 @@ router.put('/:id', [
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom(existeUsuarioPorId),
     check('rol').custom(esRolValido),
+    check('correo').custom(correoExiste),
     validarCampos
 ], usuariosPut)
 
@@ -28,6 +38,10 @@ router.post('/', [
 ], usuariosPost)
 
 router.delete('/:id', [
+    validarJWT,
+    esAdminRol,
+    //Asi se pueden enviar argumentos a los middlewares
+    tieneRol('ROLE_ADMIN', 'ROLE_USER', 'ROLE_VENTAS'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom(existeUsuarioPorId),
     validarCampos

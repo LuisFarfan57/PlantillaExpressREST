@@ -33,7 +33,7 @@ const UsuarioSchema = Schema({
     },
     rol: {
         type: String,
-        required: [true, 'La contraseña es obligatoria'],
+        required: [true, 'El rol es obligatorio'],
         enum: ['ROLE_ADMIN', 'ROLE_USER'],
     },
     estado: {
@@ -43,6 +43,9 @@ const UsuarioSchema = Schema({
     google: {
         type: Boolean,
         default: false,
+    },
+    googleId: {
+        type: String,
     },
 })
 
